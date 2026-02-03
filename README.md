@@ -38,7 +38,7 @@ This demo features **two dungeon levels**, allowing players to experience the ga
 
 ---
 
-## 💻 Team Roles & Detailed To-Do Breakdown
+## Team Roles & Detailed To-Do Breakdown
 
 ### CD Major (Game Designer / Artist)
 **Focus:** Art direction, modeling, animation, and visual identity.
@@ -57,7 +57,7 @@ This demo features **two dungeon levels**, allowing players to experience the ga
 
 ---
 
-### 💻 CS Major #1 (Gameplay Programmer) – 
+### CS Major #1 (Gameplay Programmer) – 
 **Focus:** Core player mechanics, weapons, abilities, and combat logic.
 
 | Task | Description | Hours |
