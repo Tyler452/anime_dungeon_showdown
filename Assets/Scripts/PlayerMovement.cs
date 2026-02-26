@@ -1,20 +1,21 @@
 using UnityEngine;
-using UnityEngine.InputSystem;   // If using new Input System, otherwise comment out
+using UnityEngine.InputSystem;   // New Input System support
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float maxSpeed = 10f;
     public float acceleration = 20f;
-    public float airControl = 0.5f;      // Still useful if you ever fall
+    public float airControl = 0.5f;      // How much control in air (if ever needed)
 
     [Header("Dash")]
-    public float dashSpeed = 20f;         // Speed during dash
-    public float dashDuration = 0.2f;     // How long the dash lasts
-    public float dashCooldown = 1f;       // Time before you can dash again
+    public float dashSpeed = 20f;        // Speed while dashing
+    public float dashDuration = 0.2f;    // How long dash lasts
+    public float dashCooldown = 1f;      // Cooldown before next dash
     private bool canDash = true;
     private bool isDashing = false;
     private float dashTimeLeft;
+    private Vector3 dashDirection;       // Stores which direction we dash in
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -30,10 +31,10 @@ public class PlayerMovement : MonoBehaviour
 
     // Input state
     private Vector2 moveInput;
-    private bool dashPressed;     // For new Input System polling
-    private bool usingNewInput;   // Flag to decide which input method to use
+    private bool dashPressed;
+    private bool usingNewInput;
 
-    // Camera reference for mouse aiming
+    // Camera ref for aiming with mouse
     private Camera mainCamera;
 
     void Start()
@@ -41,22 +42,20 @@ public class PlayerMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         if (animator == null)
             animator = GetComponent<Animator>();
-        mainCamera = Camera.main;   // Assumes your camera is tagged "MainCamera"
+        mainCamera = Camera.main;
 
-        // Detect if new Input System is active (optional)
+        // Detect if new Input System is being used
         usingNewInput = Keyboard.current != null || Gamepad.current != null;
     }
 
     void Update()
     {
-        // ---------- Input Handling ----------
+        // ---------- Input ----------
         if (usingNewInput)
         {
-            // New Input System (keyboard + gamepad)
             var keyboard = Keyboard.current;
             var gamepad = Gamepad.current;
 
-            // Movement
             moveInput = Vector2.zero;
             if (keyboard != null)
             {
@@ -72,17 +71,15 @@ public class PlayerMovement : MonoBehaviour
                     moveInput = stick;
             }
 
-            // Dash input (using Left Shift or gamepad button)
             dashPressed = (keyboard != null && keyboard.leftShiftKey.wasPressedThisFrame) ||
-                          (gamepad != null && gamepad.rightShoulder.wasPressedThisFrame);  // Example: RB
+                          (gamepad != null && gamepad.rightShoulder.wasPressedThisFrame);
         }
         else
         {
-            // Legacy Input (if Active Input Handling = Both)
             float x = Input.GetAxis("Horizontal");
             float z = Input.GetAxis("Vertical");
             moveInput = new Vector2(x, z);
-            dashPressed = Input.GetKeyDown(KeyCode.LeftShift);   // Change to KeyCode.Space if you prefer
+            dashPressed = Input.GetKeyDown(KeyCode.LeftShift);
         }
 
         // ---------- Ground Check ----------
@@ -103,24 +100,16 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // ---------- Mouse Rotation (Top‑Down Aim) ----------
+        // ---------- Rotation (mouse aim) ----------
         RotateToMouse();
 
-        // ---------- Horizontal Movement (accelerate / decelerate) ----------
+        // ---------- Movement ----------
         Vector3 moveDirection = (transform.right * moveInput.x + transform.forward * moveInput.y).normalized;
         Vector3 targetVelocity = moveDirection * maxSpeed;
 
-        // During dash we override velocity with dash speed in facing direction
-        if (isDashing)
-        {
-            // Dash forward (the direction the player is facing)
-            targetVelocity = transform.forward * dashSpeed;
-            // Ignore input during dash – we set velocity directly later
-        }
-
-        // Apply acceleration only if not dashing (dash uses instant speed)
         if (!isDashing)
         {
+            // Handle regular movement acceleration
             float currentAccel = isGrounded ? acceleration : acceleration * airControl;
             Vector3 horizontalVel = new Vector3(velocity.x, 0f, velocity.z);
             horizontalVel = Vector3.MoveTowards(horizontalVel, targetVelocity, currentAccel * Time.deltaTime);
@@ -129,20 +118,17 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            // During dash, set velocity directly to dash speed forward
-            velocity.x = transform.forward.x * dashSpeed;
-            velocity.z = transform.forward.z * dashSpeed;
+            // While dashing, lock velocity in chosen direction
+            velocity.x = dashDirection.x * dashSpeed;
+            velocity.z = dashDirection.z * dashSpeed;
         }
 
-        // ---------- Apply Gravity (optional if you want the player to stay on ground) ----------
-        // Since we're top‑down, you might not need gravity at all.
-        // But if you have slopes or want the player to stick to ground, keep it.
-        if (isGrounded && velocity.y < 0f)
-            velocity.y = -2f;
-        // If you want NO vertical movement, set velocity.y = 0 and skip gravity.
-        velocity.y += Physics.gravity.y * Time.deltaTime;   // Uses default gravity
+        // ---------- Gravity ----------
+        // if (isGrounded && velocity.y < 0f)
+        //     velocity.y = -2f;   // Keeps grounded without bouncing
+        // velocity.y += Physics.gravity.y * Time.deltaTime;
 
-        // ---------- Move the Character ----------
+        // ---------- Apply Movement ----------
         controller.Move(velocity * Time.deltaTime);
 
         // ---------- Animation ----------
@@ -150,25 +136,22 @@ public class PlayerMovement : MonoBehaviour
         {
             float speed = new Vector3(velocity.x, 0f, velocity.z).magnitude;
             animator.SetFloat("Speed", speed);
-            // Optionally set a "Dashing" bool if you have a dashing animation
-            // animator.SetBool("IsDashing", isDashing);
+            // animator.SetBool("IsDashing", isDashing); // uncomment if needed
         }
     }
 
     void RotateToMouse()
     {
-        // Create a ray from the camera through the mouse cursor
+        // Raycast from camera to mouse position
         Ray ray = mainCamera.ScreenPointToRay(Mouse.current != null ? Mouse.current.position.ReadValue() : Input.mousePosition);
-        // Define a plane at the player's height (y = 0, or use transform.position.y)
         Plane groundPlane = new Plane(Vector3.up, new Vector3(0f, transform.position.y, 0f));
 
         float rayDistance;
         if (groundPlane.Raycast(ray, out rayDistance))
         {
             Vector3 point = ray.GetPoint(rayDistance);
-            // Look at the point on the ground
             Vector3 lookDirection = point - transform.position;
-            lookDirection.y = 0f;   // Keep rotation only around Y axis
+            lookDirection.y = 0f;
 
             if (lookDirection != Vector3.zero)
             {
@@ -183,7 +166,18 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         canDash = false;
         dashTimeLeft = dashDuration;
-        // Optional: play a dash effect or sound
+
+        // Figure out which direction to dash in
+        Vector3 moveDir = (transform.right * moveInput.x + transform.forward * moveInput.y).normalized;
+
+        // If we’re not moving, dash forward
+        if (moveDir.magnitude < 0.1f)
+            dashDirection = transform.forward;
+        else
+            dashDirection = moveDir;
+
+        dashDirection.Normalize();
+        // Could add dash VFX or sound here
     }
 
     void EndDash()
