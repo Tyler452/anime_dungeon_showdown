@@ -172,11 +172,33 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2288867744480496678, guid: 7fc7952760bf3f442aad9dbfa5f2a226, type: 3}
   m_PrefabInstance: {fileID: 6756200794946835817}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &313402526 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7229206792023450488, guid: 7fc7952760bf3f442aad9dbfa5f2a226, type: 3}
-  m_PrefabInstance: {fileID: 6756200794946835817}
+--- !u!114 &313402527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313402520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13d602c110e365045b1a2fdd2d45a0b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ultKey: 113
+  beamDuration: 5
+  beamCooldown: 25
+  beamDamage: 20
+  beamRange: 30
+  stunKey: 101
+  stunCooldown: 10
+  stunRange: 20
+  slowAmount: 0.5
+  slowDuration: 2
+  needleKey: 114
+  needleCooldown: 6
+  needleSpeed: 25
+  explosionDelay: 2
+  needlePrefab: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,19 +349,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3e969709fe5cc34bb04ff2eac5640a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterA: {fileID: 400359779}
-  characterB: {fileID: 313402526}
   offset: {x: 0, y: 17, z: 0}
+  smoothTime: 0.2
 --- !u!1 &400359774 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7745609649399465597, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
   m_PrefabInstance: {fileID: 8693785332572688256}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &400359779 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7285856566054658013, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
-  m_PrefabInstance: {fileID: 8693785332572688256}
+--- !u!114 &400359780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400359774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3d156537d97bcf4db1783f1b73d21d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ultKey: 113
+  ultRadius: 5
+  ultDamage: 9999
+  ultCooldown: 20
+  flameKey: 101
+  flameRange: 6
+  flameDamage: 10
+  burnDamage: 2
+  burnDuration: 3
+  flameCooldown: 8
+  grappleKey: 114
+  grappleRange: 15
+  grappleSpeed: 25
+  grappleCooldown: 10
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -695,7 +737,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2288867744480496678, guid: 7fc7952760bf3f442aad9dbfa5f2a226, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 313402527}
   m_SourcePrefab: {fileID: 100100000, guid: 7fc7952760bf3f442aad9dbfa5f2a226, type: 3}
 --- !u!1001 &8693785332572688256
 PrefabInstance:
@@ -756,7 +801,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7745609649399465597, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 400359780}
   m_SourcePrefab: {fileID: 100100000, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
