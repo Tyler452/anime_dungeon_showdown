@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 13df993729b1044479022a475cc05723
+timeCreated: 1505555769
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 134177
+  packageName: Eight Directional Sprite System
+  packageVersion: 1.0
+  assetPath: Assets/EDSS/Demo/Scripts/DemoActor.cs
+  uploadId: 287325

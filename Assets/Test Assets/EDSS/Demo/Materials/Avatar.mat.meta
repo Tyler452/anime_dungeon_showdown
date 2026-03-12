@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: c3273b1d4a6b9a949892819bfadec854
+timeCreated: 1537475612
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 134177
+  packageName: Eight Directional Sprite System
+  packageVersion: 1.0
+  assetPath: Assets/EDSS/Demo/Materials/Avatar.mat
+  uploadId: 287325
