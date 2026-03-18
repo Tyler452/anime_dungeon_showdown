@@ -124,6 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ChestSource: {fileID: 4481161994768915096}
+  pressChestText: {fileID: 6413138179700000908, guid: c98eea738dc943d4ab70545cc23e96ed, type: 3}
 --- !u!82 &4481161994768915096
 AudioSource:
   m_ObjectHideFlags: 0
