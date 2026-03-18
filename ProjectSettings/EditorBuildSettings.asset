@@ -11,6 +11,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main Menu.unity
     guid: bc1591fee36f4804b82ed96559040949
+  - enabled: 1
+    path: Assets/Scenes/LobbyFloor.unity
+    guid: 1ad0a635b18eaf34ab57818e4f034306
+  - enabled: 1
+    path: Assets/Scenes/Dungeon1.unity
+    guid: 6e7b63844812be84f95a527cc1e58bc6
+  - enabled: 1
+    path: Assets/Scenes/Dungeon2.unity
+    guid: 14a227b4f8e87ea4ab099b0fb173e813
+  - enabled: 1
+    path: Assets/Scenes/Dungeon3.unity
+    guid: 4c2a197ff2b62264795be98965d155f3
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

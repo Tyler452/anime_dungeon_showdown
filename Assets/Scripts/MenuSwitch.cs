@@ -7,7 +7,7 @@ public class MenuSwitch : MonoBehaviour {
 
     public void OnButtonClick()
     {
-        SceneManager.LoadScene(sceneName:"TestScene");
+        SceneManager.LoadScene(sceneName:"LobbyFloor");
         //This will be different in the final game
     }
 
