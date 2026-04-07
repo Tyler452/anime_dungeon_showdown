@@ -49,50 +49,60 @@ public class CharacterB : MonoBehaviour
 
         float timer = 0f;
 
+        // beam stays active for the duration
         while (timer < beamDuration)
         {
             timer += Time.deltaTime;
 
-            // continuous ray while beam is active
+            // raycast shoots forward to see if it hits an enemy
             if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, beamRange))
             {
                 EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
 
+                // if the ray hits an enemy apply damage over time
                 if (enemy != null)
                 {
                     enemy.TakeDamage(beamDamage * Time.deltaTime);
                 }
             }
 
+            // wait until the next frame
             yield return null;
         }
 
+        // cooldown before ability can be used again
         yield return new WaitForSeconds(beamCooldown);
 
         canUseUlt = true;
     }
-
+    
+    // STUN BLAST ABILITY
     IEnumerator UseStunBlast()
     {
         canUseStun = false;
         Debug.Log("Stun blast fired");
 
+        // raycast forward to hit enemy
         if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, stunRange))
         {
             EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
 
             if (enemy != null)
             {
+                // apply damage
                 enemy.TakeDamage(stunDamage);
+
+                // apply slow effect
                 enemy.ApplySlow(slowAmount, slowDuration);
             }
         }
 
+        // cooldown
         yield return new WaitForSeconds(stunCooldown);
 
         canUseStun = true;
     }
-
+    
     IEnumerator UseNeedler()
     {
         canUseNeedler = false;
@@ -100,6 +110,7 @@ public class CharacterB : MonoBehaviour
 
         if (needlePrefab != null)
         {
+            // spawn the projectile slightly in front of the player
             GameObject needle = Instantiate(
                 needlePrefab,
                 transform.position + transform.forward * 1f,
@@ -109,8 +120,12 @@ public class CharacterB : MonoBehaviour
             Rigidbody rb = needle.GetComponent<Rigidbody>();
 
             if (rb != null)
+            {
+                // shoot projectile forward
                 rb.linearVelocity = transform.forward * needleSpeed;
+            }
 
+            // start explosion timer
             StartCoroutine(NeedleExplosion(needle));
         }
 
@@ -121,18 +136,20 @@ public class CharacterB : MonoBehaviour
 
     IEnumerator NeedleExplosion(GameObject needle)
     {
+        // wait before exploding
         yield return new WaitForSeconds(explosionDelay);
 
         if (needle == null) yield break;
 
         Vector3 explosionPos = needle.transform.position;
 
+        // detect enemies in explosion radius
         Collider[] hits = Physics.OverlapSphere(
             explosionPos,
             needleExplosionRadius
         );
 
-        foreach (var hit in hits)
+        foreach (Collider hit in hits)
         {
             EnemyAI enemy = hit.GetComponent<EnemyAI>();
 
