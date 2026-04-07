@@ -2,15 +2,13 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("Enemy")]
     public GameObject enemyPrefab;
-
-    [Header("Spawn Settings")]
     public float spawnRate = 5f;
     public int maxEnemies = 10;
     public float spawnRadius = 10f;
 
     private float timer;
+    private int currentEnemies = 0;
 
     void Update()
     {
@@ -25,19 +23,20 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        // limit total enemies in the scene
-        if (FindObjectsOfType<EnemyAI>().Length >= maxEnemies)
-            return;
+        if (currentEnemies >= maxEnemies) return;
 
-        // pick random point around spawner
-        Vector3 randomOffset = new Vector3(
+        Vector3 offset = new Vector3(
             Random.Range(-spawnRadius, spawnRadius),
             0,
             Random.Range(-spawnRadius, spawnRadius)
         );
 
-        Vector3 spawnPosition = transform.position + randomOffset;
+        Instantiate(enemyPrefab, transform.position + offset, Quaternion.identity);
+        currentEnemies++;
+    }
 
-        Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+    public void NotifyEnemyDied()
+    {
+        currentEnemies--;
     }
 }

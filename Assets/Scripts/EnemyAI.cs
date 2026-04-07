@@ -19,20 +19,25 @@ public class EnemyAI : MonoBehaviour
     private Transform player;
     private bool canAttack = true;
 
+    [Header("Hit Feedback")]
+    public GameObject hitVFX;
+    public AudioClip hitSFX;
+    private AudioSource audioSource;
+
     [Header("Status Effects")]
     private bool burning = false;
     private float originalSpeed;
 
     void Start()
     {
-        // set starting health
         currentHealth = maxHealth;
-
-        // store base speed in case we apply slow
         originalSpeed = moveSpeed;
 
-        // find the player in the scene
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void Update()
@@ -41,17 +46,13 @@ public class EnemyAI : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        // chase player if inside detection range
         if (distance <= chaseRange)
         {
-            Vector3 direction = (player.position - transform.position).normalized;
-
-            transform.position += direction * moveSpeed * Time.deltaTime;
-
+            Vector3 dir = (player.position - transform.position).normalized;
+            transform.position += dir * moveSpeed * Time.deltaTime;
             transform.LookAt(player);
         }
 
-        // attack if close enough
         if (distance <= attackRange && canAttack)
         {
             StartCoroutine(Attack());
@@ -61,17 +62,24 @@ public class EnemyAI : MonoBehaviour
     IEnumerator Attack()
     {
         canAttack = false;
-
-        // attack logic would go here (damage player later)
-
         yield return new WaitForSeconds(attackCooldown);
-
         canAttack = true;
     }
 
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
+
+        if (hitVFX != null)
+        {
+            GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
+            Destroy(vfx, 1f);
+        }
+
+        if (hitSFX != null)
+        {
+            audioSource.PlayOneShot(hitSFX);
+        }
 
         if (currentHealth <= 0)
         {
@@ -82,22 +90,18 @@ public class EnemyAI : MonoBehaviour
     public void ApplyBurn(float damage, float duration)
     {
         if (!burning)
-        {
             StartCoroutine(Burn(damage, duration));
-        }
     }
 
     IEnumerator Burn(float damage, float duration)
     {
         burning = true;
-
-        float timer = 0;
+        float timer = 0f;
 
         while (timer < duration)
         {
-            timer += 1f;
+            timer += Time.deltaTime;
             TakeDamage(damage);
-
             yield return new WaitForSeconds(1f);
         }
 
@@ -112,14 +116,13 @@ public class EnemyAI : MonoBehaviour
     IEnumerator Slow(float slowAmount, float duration)
     {
         moveSpeed *= slowAmount;
-
         yield return new WaitForSeconds(duration);
-
         moveSpeed = originalSpeed;
     }
 
     void Die()
     {
+        FindObjectOfType<EnemySpawner>()?.NotifyEnemyDied();
         Destroy(gameObject);
     }
 }
