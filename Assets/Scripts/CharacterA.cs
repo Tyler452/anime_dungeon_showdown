@@ -1,173 +1,66 @@
 using UnityEngine;
-using System.Collections;
 
 public class CharacterA : MonoBehaviour
 {
-    private AudioSource audioSource;
+    [Header("Base Attack (Hold Mouse)")]
+    public float baseDamage = 50f;
+    public float attackRate = 1f;
+    public float attackRadius = 2f;
+    public Transform attackPoint;
+    public GameObject slashEffect;
 
-    [Header("Normal Attack")]
-    public GameObject basicVFX;
-    public AudioClip basicSFX;
-
-    [Header("Ultimate")]
-    public KeyCode ultKey = KeyCode.Q;
-    public GameObject ultVFX;
-    public AudioClip ultSFX;
-    public float ultRadius = 5f;
-    public float ultDamage = 9999f;
-    public float ultCooldown = 20f;
-    private bool canUseUlt = true;
-
-    [Header("Flamethrower")]
-    public KeyCode flameKey = KeyCode.E;
-    public GameObject flameVFX;
-    public AudioClip flameSFX;
-    public float flameRange = 6f;
-    public float flameDamage = 10f;
-    public float burnDamage = 2f;
-    public float burnDuration = 3f;
-    public float flameCooldown = 8f;
-    private bool canUseFlame = true;
-
-    [Header("Grapple")]
-    public KeyCode grappleKey = KeyCode.R;
-    public GameObject grappleVFX;
-    public AudioClip grappleSFX;
-    public float grappleRange = 15f;
-    public float grappleSpeed = 25f;
-    public float grappleStopDistance = 3f;
-    public float grappleCooldown = 10f;
-    private bool canUseGrapple = true;
-
-    [Header("Movement")]
-    public AudioClip dodgeSFX;
-
-    void Start()
-    {
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-            audioSource = gameObject.AddComponent<AudioSource>();
-    }
+    private float attackTimer;
 
     void Update()
     {
+        HandleBaseAttack();
+    }
+
+    void HandleBaseAttack()
+    {
         if (Input.GetMouseButton(0))
-            BasicAttack();
-
-        if (Input.GetKeyDown(ultKey) && canUseUlt)
-            StartCoroutine(UseUlt());
-
-        if (Input.GetKeyDown(flameKey) && canUseFlame)
-            StartCoroutine(UseFlame());
-
-        if (Input.GetKeyDown(grappleKey) && canUseGrapple)
-            StartCoroutine(UseGrapple());
-    }
-
-    void PlayVFX(GameObject vfx, Vector3 pos)
-    {
-        if (vfx != null)
         {
-            GameObject obj = Instantiate(vfx, pos, Quaternion.identity);
-            Destroy(obj, 2f);
+            attackTimer += Time.deltaTime;
+
+            if (attackTimer >= attackRate)
+            {
+                attackTimer = 0f;
+                BaseAttack();
+            }
+        }
+        else
+        {
+            attackTimer = attackRate;
         }
     }
 
-    void PlaySFX(AudioClip clip)
+    void BaseAttack()
     {
-        if (clip != null)
-            audioSource.PlayOneShot(clip);
-    }
+        if (slashEffect != null)
+            Instantiate(slashEffect, attackPoint.position, attackPoint.rotation);
 
-    void BasicAttack()
-    {
-        PlayVFX(basicVFX, transform.position + transform.forward * 1.5f);
-        PlaySFX(basicSFX);
-
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 3f))
-        {
-            EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
-            if (enemy != null)
-                enemy.TakeDamage(10f);
-        }
-    }
-
-    IEnumerator UseUlt()
-    {
-        canUseUlt = false;
-
-        PlayVFX(ultVFX, transform.position);
-        PlaySFX(ultSFX);
-
-        Collider[] hits = Physics.OverlapSphere(transform.position, ultRadius);
+        Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackRadius);
 
         foreach (var hit in hits)
         {
-            EnemyAI enemy = hit.GetComponent<EnemyAI>();
-            if (enemy != null)
-                enemy.TakeDamage(ultDamage);
-        }
+            Vector3 dir = (hit.transform.position - transform.position).normalized;
 
-        yield return new WaitForSeconds(ultCooldown);
-        canUseUlt = true;
-    }
-
-    IEnumerator UseFlame()
-    {
-        canUseFlame = false;
-
-        PlayVFX(flameVFX, transform.position + transform.forward * 2f);
-        PlaySFX(flameSFX);
-
-        RaycastHit[] hits = Physics.SphereCastAll(transform.position, 1f, transform.forward, flameRange);
-
-        foreach (var hit in hits)
-        {
-            EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
-            if (enemy != null)
+            if (Vector3.Dot(transform.forward, dir) > 0.5f)
             {
-                enemy.TakeDamage(flameDamage);
-                enemy.ApplyBurn(burnDamage, burnDuration);
+                EnemyAI enemy = hit.GetComponent<EnemyAI>();
+
+                if (enemy != null)
+                    enemy.TakeDamage(baseDamage);
             }
         }
-
-        yield return new WaitForSeconds(flameCooldown);
-        canUseFlame = true;
     }
 
-    IEnumerator UseGrapple()
+    void OnDrawGizmosSelected()
     {
-        canUseGrapple = false;
-
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, grappleRange))
+        if (attackPoint != null)
         {
-            EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
-
-            if (enemy != null)
-            {
-                PlayVFX(grappleVFX, hit.point);
-                PlaySFX(grappleSFX);
-
-                Transform target = enemy.transform;
-
-                while (Vector3.Distance(target.position, transform.position) > grappleStopDistance)
-                {
-                    target.position = Vector3.MoveTowards(
-                        target.position,
-                        transform.position,
-                        grappleSpeed * Time.deltaTime
-                    );
-                    yield return null;
-                }
-            }
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
         }
-
-        yield return new WaitForSeconds(grappleCooldown);
-        canUseGrapple = true;
-    }
-
-    public void Dodge()
-    {
-        PlaySFX(dodgeSFX);
     }
 }

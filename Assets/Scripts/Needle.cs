@@ -15,13 +15,11 @@ public class Needle : MonoBehaviour
 
     void Start()
     {
-        // start explosion timer when projectile spawns
         StartCoroutine(ExplodeAfterDelay());
     }
 
     void OnTriggerEnter(Collider other)
     {
-        // if we hit an enemy we can explode immediately
         EnemyAI enemy = other.GetComponent<EnemyAI>();
 
         if (enemy != null && !exploded)
@@ -33,7 +31,6 @@ public class Needle : MonoBehaviour
 
     IEnumerator ExplodeAfterDelay()
     {
-        // wait before exploding
         yield return new WaitForSeconds(explosionDelay);
 
         if (!exploded)
@@ -46,7 +43,6 @@ public class Needle : MonoBehaviour
     {
         exploded = true;
 
-        // detect enemies near explosion
         Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius);
 
         foreach (Collider hit in hits)
@@ -59,7 +55,6 @@ public class Needle : MonoBehaviour
             }
         }
 
-        // spawn explosion effect if assigned
         if (explosionEffect != null)
         {
             Instantiate(explosionEffect, transform.position, Quaternion.identity);

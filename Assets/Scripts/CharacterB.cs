@@ -3,62 +3,49 @@ using System.Collections;
 
 public class CharacterB : MonoBehaviour
 {
-    private AudioSource audioSource;
+    [Header("Base Attack")]
+    public float baseDamage = 50f;
+    public float attackRate = 1f;
+    public Transform shootPoint;
+    public GameObject shootEffect;
+    private float attackTimer;
 
-    [Header("Normal Attack")]
-    public GameObject basicVFX;
-    public AudioClip basicSFX;
-
-    [Header("Beam")]
+    [Header("Kamehameha Beam")]
     public KeyCode ultKey = KeyCode.Q;
-    public GameObject beamVFX;
-    public AudioClip beamSFX;
     public float beamDuration = 5f;
-    public float beamCooldown = 25f;
+    public float beamCooldown = 5f;
     public float beamDamage = 20f;
     public float beamRange = 30f;
+
+    [Header("Beam Hitbox Size")]
+    public float beamWidth = 2f;
+    public float beamHeight = 6f;
+
+    public Transform beamSpawn;
+    public GameObject beamEffect;
     private bool canUseUlt = true;
 
-    [Header("Stun")]
+    [Header("Stun Projectile")]
     public KeyCode stunKey = KeyCode.E;
-    public GameObject stunVFX;
-    public AudioClip stunSFX;
-    public float stunRange = 20f;
-    public float stunDamage = 10f;
-    public float slowAmount = 0.5f;
-    public float slowDuration = 2f;
+    public GameObject stunProjectilePrefab;
+    public Transform stunSpawn;
+    public float stunSpeed = 20f;
+    public float stunCooldown = 5f;
     private bool canUseStun = true;
 
     [Header("Needler")]
     public KeyCode needleKey = KeyCode.R;
-    public GameObject needleVFX;
-    public AudioClip needleSFX;
-    public GameObject explosionVFX;
-    public AudioClip explosionSFX;
     public GameObject needlePrefab;
     public float needleSpeed = 25f;
-    public float explosionDelay = 2f;
-    public float explosionRadius = 4f;
-    public float needleDamage = 25f;
+    public float needleCooldown = 5f;
     private bool canUseNeedler = true;
-
-    [Header("Movement")]
-    public AudioClip dodgeSFX;
-
-    void Start()
-    {
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-            audioSource = gameObject.AddComponent<AudioSource>();
-    }
 
     void Update()
     {
-        if (Input.GetMouseButton(0))
-            BasicAttack();
+        HandleBaseAttack();
 
         if (Input.GetKeyDown(ultKey) && canUseUlt)
-            StartCoroutine(UseBeam());
+            StartCoroutine(UseKamehameha());
 
         if (Input.GetKeyDown(stunKey) && canUseStun)
             StartCoroutine(UseStun());
@@ -67,80 +54,108 @@ public class CharacterB : MonoBehaviour
             StartCoroutine(UseNeedler());
     }
 
-    void PlayVFX(GameObject vfx, Vector3 pos)
+    void HandleBaseAttack()
     {
-        if (vfx != null)
+        if (Input.GetMouseButton(0))
         {
-            GameObject obj = Instantiate(vfx, pos, Quaternion.identity);
-            Destroy(obj, 2f);
+            attackTimer += Time.deltaTime;
+
+            if (attackTimer >= attackRate)
+            {
+                attackTimer = 0f;
+                BaseAttack();
+            }
+        }
+        else
+        {
+            attackTimer = attackRate;
         }
     }
 
-    void PlaySFX(AudioClip clip)
+    void BaseAttack()
     {
-        if (clip != null)
-            audioSource.PlayOneShot(clip);
-    }
+        if (shootEffect != null)
+            Instantiate(shootEffect, shootPoint.position, shootPoint.rotation);
 
-    void BasicAttack()
-    {
-        PlayVFX(basicVFX, transform.position + transform.forward * 1.5f);
-        PlaySFX(basicSFX);
-
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 4f))
+        if (Physics.Raycast(shootPoint.position, shootPoint.forward, out RaycastHit hit, Mathf.Infinity))
         {
             EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
+
             if (enemy != null)
-                enemy.TakeDamage(8f);
+                enemy.TakeDamage(baseDamage);
         }
     }
 
-    IEnumerator UseBeam()
+    IEnumerator UseKamehameha()
     {
         canUseUlt = false;
+        Debug.Log("Beam activated");
 
-        PlaySFX(beamSFX);
+        if (beamEffect != null)
+            beamEffect.SetActive(true);
 
         float timer = 0f;
 
         while (timer < beamDuration)
         {
             timer += Time.deltaTime;
-
-            PlayVFX(beamVFX, transform.position + transform.forward * 3f);
-
-            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, beamRange))
-            {
-                EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
-                if (enemy != null)
-                    enemy.TakeDamage(beamDamage * Time.deltaTime);
-            }
-
+            BeamDamageBox();
             yield return null;
         }
 
+        if (beamEffect != null)
+            beamEffect.SetActive(false);
+
         yield return new WaitForSeconds(beamCooldown);
         canUseUlt = true;
+    }
+
+    void BeamDamageBox()
+    {
+        Vector3 center = beamSpawn.position + beamSpawn.forward * (beamRange / 2f);
+
+        Vector3 halfExtents = new Vector3(
+            beamWidth / 2f,
+            beamHeight / 2f,
+            beamRange / 2f
+        );
+
+        Collider[] hits = Physics.OverlapBox(
+            center,
+            halfExtents,
+            beamSpawn.rotation
+        );
+
+        foreach (Collider hit in hits)
+        {
+            EnemyAI enemy = hit.GetComponent<EnemyAI>();
+
+            if (enemy != null)
+            {
+                enemy.TakeDamage(beamDamage * Time.deltaTime);
+            }
+        }
     }
 
     IEnumerator UseStun()
     {
         canUseStun = false;
 
-        PlayVFX(stunVFX, transform.position + transform.forward * 2f);
-        PlaySFX(stunSFX);
-
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, stunRange))
+        if (stunProjectilePrefab != null && stunSpawn != null)
         {
-            EnemyAI enemy = hit.collider.GetComponent<EnemyAI>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(stunDamage);
-                enemy.ApplySlow(slowAmount, slowDuration);
-            }
+            GameObject stun = Instantiate(
+                stunProjectilePrefab,
+                stunSpawn.position,
+                stunSpawn.rotation
+            );
+
+            Rigidbody rb = stun.GetComponent<Rigidbody>();
+
+            if (rb != null)
+                rb.linearVelocity = stunSpawn.forward * stunSpeed;
         }
 
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(stunCooldown);
         canUseStun = true;
     }
 
@@ -148,43 +163,46 @@ public class CharacterB : MonoBehaviour
     {
         canUseNeedler = false;
 
-        GameObject needle = Instantiate(
-            needlePrefab,
-            transform.position + transform.forward,
-            transform.rotation
-        );
-
-        PlayVFX(needleVFX, needle.transform.position);
-        PlaySFX(needleSFX);
-
-        Rigidbody rb = needle.GetComponent<Rigidbody>();
-        if (rb != null)
-            rb.linearVelocity = transform.forward * needleSpeed;
-
-        yield return new WaitForSeconds(explosionDelay);
-
-        Vector3 pos = needle.transform.position;
-
-        PlayVFX(explosionVFX, pos);
-        PlaySFX(explosionSFX);
-
-        Collider[] hits = Physics.OverlapSphere(pos, explosionRadius);
-
-        foreach (var hit in hits)
+        if (needlePrefab != null && shootPoint != null)
         {
-            EnemyAI enemy = hit.GetComponent<EnemyAI>();
-            if (enemy != null)
-                enemy.TakeDamage(needleDamage);
+            GameObject needle = Instantiate(
+                needlePrefab,
+                shootPoint.position,
+                shootPoint.rotation
+            );
+
+            Rigidbody rb = needle.GetComponent<Rigidbody>();
+
+            if (rb != null)
+                rb.linearVelocity = shootPoint.forward * needleSpeed;
         }
 
-        Destroy(needle);
-
-        yield return new WaitForSeconds(6f);
+        yield return new WaitForSeconds(needleCooldown);
         canUseNeedler = true;
     }
 
-    public void Dodge()
+    void OnEnable()
     {
-        PlaySFX(dodgeSFX);
+        canUseUlt = true;
+        canUseStun = true;
+        canUseNeedler = true;
+
+        if (beamEffect != null)
+            beamEffect.SetActive(false);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (beamSpawn == null) return;
+
+        Gizmos.color = Color.cyan;
+
+        Vector3 center = beamSpawn.position + beamSpawn.forward * (beamRange / 2f);
+        Vector3 size = new Vector3(beamWidth, beamHeight, beamRange);
+
+        Matrix4x4 oldMatrix = Gizmos.matrix;
+        Gizmos.matrix = Matrix4x4.TRS(center, beamSpawn.rotation, Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, size);
+        Gizmos.matrix = oldMatrix;
     }
 }

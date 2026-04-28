@@ -9,48 +9,43 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 3f;
-    public float chaseRange = 15f;
+    public float chaseRange = 30f;
 
     [Header("Attack")]
     public float attackRange = 2f;
     public float attackDamage = 10f;
     public float attackCooldown = 1.5f;
-
-    private Transform player;
     private bool canAttack = true;
 
-    [Header("Hit Feedback")]
-    public GameObject hitVFX;
-    public AudioClip hitSFX;
-    private AudioSource audioSource;
+    [Header("Target")]
+    public Transform target;
 
-    [Header("Status Effects")]
-    private bool burning = false;
     private float originalSpeed;
+    private bool burning = false;
 
     void Start()
     {
         currentHealth = maxHealth;
         originalSpeed = moveSpeed;
-
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-            audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void Update()
     {
-        if (player == null) return;
+        FindTarget();
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        if (target == null) return;
+
+        float distance = Vector3.Distance(transform.position, target.position);
 
         if (distance <= chaseRange)
         {
-            Vector3 dir = (player.position - transform.position).normalized;
+            Vector3 dir = (target.position - transform.position).normalized;
+            dir.y = 0f;
+
             transform.position += dir * moveSpeed * Time.deltaTime;
-            transform.LookAt(player);
+
+            if (dir != Vector3.zero)
+                transform.rotation = Quaternion.LookRotation(dir);
         }
 
         if (distance <= attackRange && canAttack)
@@ -59,9 +54,27 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    void FindTarget()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null && player.activeInHierarchy)
+        {
+            target = player.transform;
+        }
+    }
+
     IEnumerator Attack()
     {
         canAttack = false;
+
+        PlayerHealth playerHealth = target.GetComponent<PlayerHealth>();
+
+        if (playerHealth != null)
+        {
+            playerHealth.TakeDamage(attackDamage);
+        }
+
         yield return new WaitForSeconds(attackCooldown);
         canAttack = true;
     }
@@ -69,17 +82,7 @@ public class EnemyAI : MonoBehaviour
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
-
-        if (hitVFX != null)
-        {
-            GameObject vfx = Instantiate(hitVFX, transform.position, Quaternion.identity);
-            Destroy(vfx, 1f);
-        }
-
-        if (hitSFX != null)
-        {
-            audioSource.PlayOneShot(hitSFX);
-        }
+        Debug.Log(gameObject.name + " took damage: " + damage);
 
         if (currentHealth <= 0)
         {
@@ -100,7 +103,7 @@ public class EnemyAI : MonoBehaviour
 
         while (timer < duration)
         {
-            timer += Time.deltaTime;
+            timer += 1f;
             TakeDamage(damage);
             yield return new WaitForSeconds(1f);
         }
@@ -122,7 +125,6 @@ public class EnemyAI : MonoBehaviour
 
     void Die()
     {
-        FindObjectOfType<EnemySpawner>()?.NotifyEnemyDied();
         Destroy(gameObject);
     }
 }

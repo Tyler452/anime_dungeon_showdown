@@ -17,22 +17,18 @@ public class CharacterSwap : MonoBehaviour
 
     void Start()
     {
-        // Pick which character starts
         activeCharacter = startWithA ? characterA : characterB;
 
-        // Enable one and disable the other
         if (characterA != null && characterB != null)
         {
             characterA.SetActive(startWithA);
             characterB.SetActive(!startWithA);
         }
 
-        // Get camera + follow script
         mainCamera = Camera.main;
         if (mainCamera != null)
             camFollow = mainCamera.GetComponent<CameraFollow>();
 
-        // --- tell camera who to follow right away ---
         if (camFollow != null && activeCharacter != null)
         {
             camFollow.SetTarget(activeCharacter.transform);
@@ -60,10 +56,8 @@ public class CharacterSwap : MonoBehaviour
             return;
         }
 
-        // Figure out who’s next
         GameObject nextCharacter = (activeCharacter == characterA) ? characterB : characterA;
 
-        // Keep position/rotation if you want a true swap
         Vector3 currentPos = activeCharacter.transform.position;
         Quaternion currentRot = activeCharacter.transform.rotation;
 
@@ -71,10 +65,8 @@ public class CharacterSwap : MonoBehaviour
         nextCharacter.SetActive(true);
         nextCharacter.transform.SetPositionAndRotation(currentPos, currentRot);
 
-        // Update the active one
         activeCharacter = nextCharacter;
 
-        // --- update the camera target immediately ---
         if (camFollow != null)
             camFollow.SetTarget(activeCharacter.transform);
 

@@ -44,6 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc0ec79f10af3e14485f8922204e0d58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 0}
-  spawnRate: 5
-  maxEnemies: 10
+  enemyPrefab: {fileID: 76133958109154393, guid: 661f41879b14fbf46961e512cbb27221, type: 3}
+  playerTargets:
+  - {fileID: 0}
+  - {fileID: 0}
+  startingEnemiesPerWave: 20
+  additionalEnemiesPerWave: 5
+  timeBetweenWaves: 2
+  timeBetweenSpawns: 0.35
+  minSpawnRadius: 6
+  maxSpawnRadius: 10
