@@ -102,7 +102,7 @@ This demo features **two dungeon levels**, allowing players to experience the ga
 
 ## Tools
 - **Engine:** Unity 3D  
-- **Modeling & Texturing:** Blender, Substance Painter, Photoshop  
+- **Modeling & Texturing:** Pixel Studio, Photoshop  
 - **Animation:** Mixamo / Unity Animator  
 - **Audio:** Freesound.org, custom-made SFX, Bensound/Epidemic BGM  
 - **Version Control:** GitHub   
