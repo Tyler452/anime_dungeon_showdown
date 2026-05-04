@@ -11,8 +11,9 @@ public class GameplayUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E) && ability1.IsReady())
             ability1.UseAbility();
-
         if (Input.GetKeyDown(KeyCode.R) && ability2.IsReady())
             ability2.UseAbility();
+        if (Input.GetKeyDown(KeyCode.Q) && ability3.IsReady())
+            ability3.UseAbility();
     }
 }
