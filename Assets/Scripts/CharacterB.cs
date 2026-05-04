@@ -39,6 +39,10 @@ public class CharacterB : MonoBehaviour
     public float needleSpeed = 25f;
     public float needleCooldown = 5f;
     private bool canUseNeedler = true;
+    
+    
+    [Header("UI")]
+    public GameplayUI gameplayUI;
 
     void Update()
     {
@@ -90,7 +94,7 @@ public class CharacterB : MonoBehaviour
     {
         canUseUlt = false;
         Debug.Log("Beam activated");
-
+        
         if (beamEffect != null)
             beamEffect.SetActive(true);
 
@@ -105,7 +109,6 @@ public class CharacterB : MonoBehaviour
 
         if (beamEffect != null)
             beamEffect.SetActive(false);
-
         yield return new WaitForSeconds(beamCooldown);
         canUseUlt = true;
     }
@@ -154,7 +157,6 @@ public class CharacterB : MonoBehaviour
             if (rb != null)
                 rb.linearVelocity = stunSpawn.forward * stunSpeed;
         }
-
         yield return new WaitForSeconds(stunCooldown);
         canUseStun = true;
     }
@@ -176,7 +178,6 @@ public class CharacterB : MonoBehaviour
             if (rb != null)
                 rb.linearVelocity = shootPoint.forward * needleSpeed;
         }
-
         yield return new WaitForSeconds(needleCooldown);
         canUseNeedler = true;
     }

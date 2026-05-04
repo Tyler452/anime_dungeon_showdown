@@ -10,7 +10,11 @@ public class CharacterA : MonoBehaviour
     public GameObject slashEffect;
 
     private float attackTimer;
-
+    
+    
+    //UI
+    
+    public GameplayUI gameplayUI;
     void Update()
     {
         HandleBaseAttack();
