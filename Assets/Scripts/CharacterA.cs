@@ -12,9 +12,6 @@ public class CharacterA : MonoBehaviour
     private float attackTimer;
     
     
-    //UI
-    
-    public GameplayUI gameplayUI;
     void Update()
     {
         HandleBaseAttack();

@@ -39,10 +39,6 @@ public class CharacterB : MonoBehaviour
     public float needleSpeed = 25f;
     public float needleCooldown = 5f;
     private bool canUseNeedler = true;
-    
-    
-    [Header("UI")]
-    public GameplayUI gameplayUI;
 
     void Update()
     {
