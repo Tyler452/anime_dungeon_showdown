@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: bf9bd2255f2df834785cc3908236b778
+timeCreated: 1537133718
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 134177
+  packageName: Eight Directional Sprite System
+  packageVersion: 1.0
+  assetPath: Assets/EDSS/Demo/Animations/DemoActor/DemoActor_Stand.asset
+  uploadId: 287325

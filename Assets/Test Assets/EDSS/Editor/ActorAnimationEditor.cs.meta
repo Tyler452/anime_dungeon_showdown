@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 859f2286d4528794a9748f76923e804e
+timeCreated: 1507584650
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 134177
+  packageName: Eight Directional Sprite System
+  packageVersion: 1.0
+  assetPath: Assets/EDSS/Editor/ActorAnimationEditor.cs
+  uploadId: 287325

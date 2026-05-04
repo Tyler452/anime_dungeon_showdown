@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 6ef49954fdb55c943ac22a27ba410d6c
+timeCreated: 1536523655
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 134177
+  packageName: Eight Directional Sprite System
+  packageVersion: 1.0
+  assetPath: Assets/EDSS/Scripts/ActorFrame.cs
+  uploadId: 287325

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 85fbd874443b295499562f57c2d047cb
+timeCreated: 1540587934
+licenseType: Store
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 134177
+  packageName: Eight Directional Sprite System
+  packageVersion: 1.0
+  assetPath: Assets/EDSS/Demo/Scenes/Demo.unity
+  uploadId: 287325
