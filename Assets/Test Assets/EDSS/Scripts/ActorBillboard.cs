@@ -163,6 +163,12 @@ namespace EightDirectionalSpriteSystem
 
         private void OnWillRenderObject()
         {
+            
+            Camera cam = Camera.current;
+
+            if (cam == null)
+                return;
+            
             if (beforeRenderBillboardEvent != null)
                 beforeRenderBillboardEvent();
 
