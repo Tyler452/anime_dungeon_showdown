@@ -8,7 +8,7 @@
 ---
 
 ##  Overview
-**Anime Dungeon Showdown** is a **3D anime-inspired dungeon shooter** combining fast-paced gunplay, melee combat, and magic-based abilities.
+**Anime Dungeon Showdown** is a **2.5D anime-inspired dungeon shooter** combining fast-paced gunplay, melee combat, and magic-based abilities.
 
 Players start in a **small lobby hub** and choose **two characters**, each with distinct weapons and special powers. They then dive into **enemy-filled dungeons** where they must survive, explore, and collect chests containing new weapons and upgrades.
 
@@ -47,9 +47,9 @@ This demo features **two dungeon levels**, allowing players to experience the ga
 |------|--------------|-------|
 | Character Concept Art | Create detailed sketches for 4 characters (poses, outfits, weapons) | 20 |
 | Environment Concepts | Design dungeon rooms, props, and overall color palette | 10 |
-| Character 3D Models | Model and texture Kira and Rai (low-poly anime style, rigged) | 40 |
+| Character Pixel art| Model and texture Kira and Rai (low-poly anime style, rigged) | 40 |
 | Environment Assets | Create modular dungeon walls, floors, props, and chests | 35 |
-| Weapon Models | Design and texture 5–6 weapons (guns, melee, magic wands) | 15 |
+| Weapon Models | Design and texture 5–6 weapons (guns, melee, Ki) | 15 |
 | UI/UX Design | Health bars, energy meters, menu icons, character select layout | 15 |
 | Particle FX | Magic bursts, gunfire flashes, hit sparks, ability VFX | 15 |
 | Lighting & Post-Processing | Set ambient lighting, add bloom, adjust atmosphere per level | 10 |
