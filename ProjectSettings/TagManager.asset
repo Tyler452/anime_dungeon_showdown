@@ -8,6 +8,8 @@ TagManager:
   - PickUp
   - Coin
   - Chest
+  - Enemy
+  - BossWall
   layers:
   - Default
   - TransparentFX

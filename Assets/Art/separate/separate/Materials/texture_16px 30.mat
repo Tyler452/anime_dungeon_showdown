@@ -7,10 +7,10 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: texture_16px 16
+  m_Name: texture_16px 30
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 2100000, guid: 3311e707b56872d4991ee59a43301697, type: 2}
-  m_ModifiedSerializedProperties: 16
+  m_Parent: {fileID: 2100000, guid: 5833d5af2aa9aef4fbbdef1338662a7f, type: 2}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -26,19 +26,19 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 6b6b8c4e825c0b74aafb564e32da2d4d, type: 3}
-        m_Scale: {x: 17.65, y: 6.45}
+        m_Texture: {fileID: 2800000, guid: 120997053994edf46867f05a0028ca2b, type: 3}
+        m_Scale: {x: 150, y: 150}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 6b6b8c4e825c0b74aafb564e32da2d4d, type: 3}
-        m_Scale: {x: 17.65, y: 6.45}
+        m_Texture: {fileID: 2800000, guid: 120997053994edf46867f05a0028ca2b, type: 3}
+        m_Scale: {x: 150, y: 150}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats: []
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &1264309981229635063
+--- !u!114 &3552923108016890440
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
