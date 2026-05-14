@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CharacterA : MonoBehaviour
+public class CharacterA : MonoBehaviour, IDamageableCharacter
 {
     [Header("Base Attack")] public float baseDamage = 50f;
     public float attackRate = 1f;
@@ -41,5 +41,14 @@ public class CharacterA : MonoBehaviour
                 hitbox.Init(baseDamage, null); // Pass any custom callbacks if needed
             }
         }
+    }
+
+    // Implementing the interface method
+    public void AddDamageToRandomAbility(float damage)
+    {
+        // Boost the base damage temporarily; modify this logic as needed
+        baseDamage += damage;
+
+        Debug.Log($"CharacterA's base damage increased by {damage}. New base damage: {baseDamage}");
     }
 }
