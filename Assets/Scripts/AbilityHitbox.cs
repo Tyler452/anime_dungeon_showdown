@@ -1,63 +1,61 @@
-// using UnityEngine;
-// using System.Collections.Generic;
-//
-// public class AbilityHitbox : MonoBehaviour
-// {
-//     [Header("Damage")]
-//     public float damage = 10f;
-//     public float lifetime = 0.2f;
-//     public bool destroyOnFirstHit = false;
-//     public bool singleHitPerEnemy = true;
-//
-//     [Header("Status Effects")]
-//     public bool applyBurn = false;
-//     public float burnDamage = 2f;
-//     public float burnDuration = 3f;
-//
-//     public bool applyBleed = false;
-//     public float bleedDamage = 2f;
-//     public float bleedDuration = 3f;
-//
-//     public bool applyStun = false;
-//     public float stunDuration = 1f;
-//
-//     public bool applySlow = false;
-//     public float slowMultiplier = 0.5f;
-//     public float slowDuration = 2f;
-//
-//     private readonly HashSet<EnemyAI> hitEnemies = new HashSet<EnemyAI>();
-//
-//     void Start()
-//     {
-//         Destroy(gameObject, lifetime);
-//     }
-//
-//     void OnTriggerEnter(Collider other)
-//     {
-//         EnemyAI enemy = other.GetComponent<EnemyAI>();
-//         if (enemy == null)
-//             return;
-//
-//         if (singleHitPerEnemy && hitEnemies.Contains(enemy))
-//             return;
-//
-//         hitEnemies.Add(enemy);
-//
-//         enemy.TakeDamage(damage);
-//
-//         if (applyBurn)
-//             enemy.ApplyBurn(burnDamage, burnDuration);
-//
-//         if (applyBleed)
-//             enemy.ApplyBleed(bleedDamage, bleedDuration);
-//
-//         if (applyStun)
-//             enemy.ApplyStun(stunDuration);
-//
-//         if (applySlow)
-//             enemy.ApplySlow(slowMultiplier, slowDuration);
-//
-//         if (destroyOnFirstHit)
-//             Destroy(gameObject);
-//     }
-// }
+using UnityEngine;
+using System.Collections.Generic;
+
+public class AbilityHitbox : MonoBehaviour
+{
+    [Header("Damage")] public float damage = 10f;
+    public float lifetime = 0.5f;
+    public bool destroyOnFirstHit = false;
+    public bool singleHitPerEnemy = true;
+
+    [Header("Status Effects")] public bool applyBurn;
+    public float burnDamage, burnDuration;
+
+    public bool applySlow;
+    public float slowMultiplier, slowDuration;
+
+    public bool applyStun;
+    public float stunDuration;
+
+    private HashSet<Collider> hitTargets = new HashSet<Collider>();
+    private System.Action<Collider> hitCallback; // Custom callback on hit
+
+    public void Init(float abilityDamage, System.Action<Collider> hitCallback)
+    {
+        this.damage = abilityDamage;
+        this.hitCallback = hitCallback;
+        Destroy(gameObject, lifetime); // Destroy after lifetime ends
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (hitTargets.Contains(other)) return; // Prevent multi-hit if singleHitPerEnemy is enabled
+
+        hitTargets.Add(other);
+
+        // Check if the collider is valid (e.g., has an EnemyAI script)
+        EnemyAI enemy = other.GetComponent<EnemyAI>();
+        if (enemy != null)
+        {
+            // Apply general damage
+            enemy.TakeDamage(damage);
+
+            // Apply burn
+            if (applyBurn)
+                enemy.ApplyBurn(burnDamage, burnDuration);
+
+            // Apply slow
+            if (applySlow)
+                enemy.ApplySlow(slowMultiplier, slowDuration);
+
+            // Apply stun
+            if (applyStun)
+                enemy.ApplyStun(stunDuration);
+        }
+
+        // Call custom logic (e.g., StunProjectile destroying itself)
+        hitCallback?.Invoke(other);
+
+        if (destroyOnFirstHit) Destroy(gameObject);
+    }
+}

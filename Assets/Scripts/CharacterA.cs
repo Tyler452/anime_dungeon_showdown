@@ -2,21 +2,14 @@ using UnityEngine;
 
 public class CharacterA : MonoBehaviour
 {
-    [Header("Base Attack (Hold Mouse)")]
-    public float baseDamage = 50f;
+    [Header("Base Attack")] public float baseDamage = 50f;
     public float attackRate = 1f;
-    public float attackRadius = 2f;
     public Transform attackPoint;
-    public GameObject slashEffect;
+    public GameObject hitboxPrefab;
 
     private float attackTimer;
 
     void Update()
-    {
-        HandleBaseAttack();
-    }
-
-    void HandleBaseAttack()
     {
         if (Input.GetMouseButton(0))
         {
@@ -25,42 +18,28 @@ public class CharacterA : MonoBehaviour
             if (attackTimer >= attackRate)
             {
                 attackTimer = 0f;
-                BaseAttack();
+                UseBaseAttack();
             }
         }
         else
         {
-            attackTimer = attackRate;
+            attackTimer = attackRate; // Reset immediately when not attacking
         }
     }
 
-    void BaseAttack()
+    void UseBaseAttack()
     {
-        if (slashEffect != null)
-            Instantiate(slashEffect, attackPoint.position, attackPoint.rotation);
-
-        Collider[] hits = Physics.OverlapSphere(attackPoint.position, attackRadius);
-
-        foreach (var hit in hits)
+        // Spawn ability hitbox
+        if (hitboxPrefab != null)
         {
-            Vector3 dir = (hit.transform.position - transform.position).normalized;
+            GameObject hitboxInstance = Instantiate(hitboxPrefab, attackPoint.position, attackPoint.rotation);
+            AbilityHitbox hitbox = hitboxInstance.GetComponent<AbilityHitbox>();
 
-            if (Vector3.Dot(transform.forward, dir) > 0.5f)
+            // Initialize the hitbox with damage and effects (if needed)
+            if (hitbox != null)
             {
-                EnemyAI enemy = hit.GetComponent<EnemyAI>();
-
-                if (enemy != null)
-                    enemy.TakeDamage(baseDamage);
+                hitbox.Init(baseDamage, null); // Pass any custom callbacks if needed
             }
-        }
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if (attackPoint != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
         }
     }
 }

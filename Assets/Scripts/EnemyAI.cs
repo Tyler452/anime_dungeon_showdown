@@ -3,25 +3,25 @@ using System.Collections;
 
 public class EnemyAI : MonoBehaviour
 {
-    [Header("Stats")]
-    public float maxHealth = 100f;
+    [Header("Stats")] public float maxHealth = 100f;
     private float currentHealth;
 
-    [Header("Movement")]
-    public float moveSpeed = 3f;
+    [Header("Movement")] public float moveSpeed = 3f;
     public float chaseRange = 30f;
 
-    [Header("Attack")]
-    public float attackRange = 2f;
+    [Header("Attack")] public float attackRange = 2f;
     public float attackDamage = 10f;
     public float attackCooldown = 1.5f;
     private bool canAttack = true;
 
-    [Header("Target")]
-    public Transform target;
+    [Header("Target")] public Transform target;
 
     private float originalSpeed;
     private bool burning = false;
+
+    // Stun Variables
+    private bool isStunned = false;
+    private float stunTimer = 0f;
 
     void Start()
     {
@@ -31,6 +31,20 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        if (isStunned)
+        {
+            stunTimer -= Time.deltaTime;
+
+            if (stunTimer <= 0f)
+            {
+                isStunned = false;
+                moveSpeed = originalSpeed;
+                Debug.Log(gameObject.name + " is no longer stunned.");
+            }
+
+            return;
+        }
+
         FindTarget();
 
         if (target == null) return;
@@ -57,7 +71,6 @@ public class EnemyAI : MonoBehaviour
     void FindTarget()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-
         if (player != null && player.activeInHierarchy)
         {
             target = player.transform;
@@ -67,9 +80,7 @@ public class EnemyAI : MonoBehaviour
     IEnumerator Attack()
     {
         canAttack = false;
-
         PlayerHealth playerHealth = target.GetComponent<PlayerHealth>();
-
         if (playerHealth != null)
         {
             playerHealth.TakeDamage(attackDamage);
@@ -123,8 +134,23 @@ public class EnemyAI : MonoBehaviour
         moveSpeed = originalSpeed;
     }
 
+    public void ApplyStun(float duration)
+    {
+        if (!isStunned)
+        {
+            isStunned = true;
+            stunTimer = duration;
+            moveSpeed = 0f;
+            canAttack = false;
+            Debug.Log(gameObject.name + " is stunned for " + duration + " seconds!");
+        }
+    }
+
     void Die()
     {
+        EnemySpawner spawner = FindObjectOfType<EnemySpawner>();
+        spawner?.NotifyEnemyDied();
+
         Destroy(gameObject);
     }
 }

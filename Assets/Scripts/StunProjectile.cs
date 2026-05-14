@@ -1,30 +1,33 @@
 using UnityEngine;
 
+[RequireComponent(typeof(AbilityHitbox))]
 public class StunProjectile : MonoBehaviour
 {
-    [Header("Stun Settings")]
-    public float damage = 10f;
+    [Header("Stun Settings")] public float damage = 10f;
     public float slowAmount = 0.5f;
     public float slowDuration = 2f;
     public float lifeTime = 3f;
 
-    [Header("Effects")]
-    public GameObject hitEffect;
+    [Header("Effects")] public GameObject hitEffect;
+
+    private AbilityHitbox hitbox;
 
     void Start()
     {
-        Destroy(gameObject, lifeTime);
+        hitbox = GetComponent<AbilityHitbox>();
+        hitbox.Init(damage, hitCallback: OnHit);
+        Destroy(gameObject, lifeTime); // Auto-lifetime timer
     }
 
-    void OnTriggerEnter(Collider other)
+    private void OnHit(Collider target)
     {
-        EnemyAI enemy = other.GetComponent<EnemyAI>();
-
+        EnemyAI enemy = target.GetComponent<EnemyAI>();
         if (enemy != null)
         {
-            enemy.TakeDamage(damage);
+            // Apply stun and slow effects
             enemy.ApplySlow(slowAmount, slowDuration);
 
+            // Optional: Explosion, sound, or visuals
             if (hitEffect != null)
                 Instantiate(hitEffect, transform.position, Quaternion.identity);
 
