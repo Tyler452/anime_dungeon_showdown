@@ -1770,16 +1770,36 @@ PrefabInstance:
       value: Character1
       objectReference: {fileID: 0}
     - target: {fileID: 8450189328694153819, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8450189328694153819, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
+      propertyPath: m_FlipY
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8450189328694153819, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
+      propertyPath: m_Size.x
+      value: 0.78
+      objectReference: {fileID: 0}
+    - target: {fileID: 8450189328694153819, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
+      propertyPath: m_Size.y
+      value: 1.71
+      objectReference: {fileID: 0}
+    - target: {fileID: 8450189328694153819, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300010, guid: 74087d07f0834e64d8977c50a7520754, type: 3}
+    - target: {fileID: 8450189328694153819, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8621688095759342761, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.96519125
+      value: 0.8706589
       objectReference: {fileID: 0}
     - target: {fileID: 8621688095759342761, guid: 1b350d3a17c6424438b8f9054c2fc0cc, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.2615452
+      value: -0.4918873
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
